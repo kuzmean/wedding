@@ -576,12 +576,56 @@
     </footer>
 
     <script>
-        // --- Рандомное Имя в Placeholder ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const randomNames = ["Станислав Кузьмин", "Софья Ковалева", "Сергей Соломахин", "Дмитрий Сукманов", "Виктория Долматова"];
-            const selectedName = randomNames[Math.floor(Math.random() * randomNames.length)];
-            document.getElementById('guestNameInput').placeholder = `Например, ${selectedName}`;
-        });
+// --- Эффект печатной машинки в Placeholder ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputField = document.getElementById('guestNameInput');
+        const placeholderPrefix = "Например, ";
+        // Твои имена для перебора:
+        const names = [
+            "Станислав Кузьмин", 
+            "Софья Ковалева", 
+            "Сергей Соломахин", 
+            "Дмитрий Сукманов", 
+            "Виктория Долматова"
+        ];
+        
+        let nameIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typeSpeed = 100;
+
+        function typeEffect() {
+            const currentName = names[nameIndex];
+            
+            // Логика печатания и стирания
+            if (isDeleting) {
+                inputField.placeholder = placeholderPrefix + currentName.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 50; // Стираем быстрее
+            } else {
+                inputField.placeholder = placeholderPrefix + currentName.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 100; // Печатаем с обычной скоростью
+            }
+
+            // Переключение состояний
+            if (!isDeleting && charIndex === currentName.length) {
+                // Напечатали имя целиком — пауза 2 секунды
+                isDeleting = true;
+                typeSpeed = 2000; 
+            } else if (isDeleting && charIndex === 0) {
+                // Стерли имя целиком — переходим к следующему
+                isDeleting = false;
+                nameIndex = (nameIndex + 1) % names.length;
+                typeSpeed = 500; // Пауза перед новым именем
+            }
+
+            setTimeout(typeEffect, typeSpeed);
+        }
+
+        // Запуск анимации
+        typeEffect();
+    });
 
         // --- Плавное появление элементов при скролле ---
         const observerOptions = {
